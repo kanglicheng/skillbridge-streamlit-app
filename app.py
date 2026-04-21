@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import io
 import logging
+import threading
 import traceback
 from collections import deque
 
@@ -70,15 +71,19 @@ def render_sidebar() -> Settings:
     return Settings.load(use_fallbacks_only=st.session_state["use_fallbacks_only"])
 
 
-# deque with maxlen gives us atomic append + automatic bounded-size trim, so the
-# manual slice-drop is unnecessary and the buffer is safe under concurrent
-# Streamlit reruns / background threads that might emit log records.
+# deque(maxlen=200) makes append + bounded trim atomic under the GIL, but
+# iterating it (e.g., list(_LOG_BUFFER) in _tail_log) can still raise
+# RuntimeError if another thread appends mid-iteration. _LOG_LOCK serializes
+# write vs. snapshot so both sides are safe under Streamlit's worker threads.
 _LOG_BUFFER: deque[str] = deque(maxlen=200)
+_LOG_LOCK = threading.Lock()
 
 
 class _BufferHandler(logging.Handler):
     def emit(self, record: logging.LogRecord) -> None:
-        _LOG_BUFFER.append(self.format(record))
+        msg = self.format(record)
+        with _LOG_LOCK:
+            _LOG_BUFFER.append(msg)
 
 
 def _install_buffer_handler() -> None:
@@ -91,9 +96,12 @@ def _install_buffer_handler() -> None:
 
 
 def _tail_log(n: int = 30) -> str:
-    # deque doesn't support negative slicing — snapshot via list() then slice.
-    lines = list(_LOG_BUFFER)[-n:]
-    return "\n".join(lines) or "(no log lines yet)"
+    # Snapshot under the lock so a concurrent emit() can't mutate the deque
+    # mid-iteration (CPython raises RuntimeError on that). Slicing happens
+    # outside the critical section.
+    with _LOG_LOCK:
+        lines = list(_LOG_BUFFER)
+    return "\n".join(lines[-n:]) or "(no log lines yet)"
 
 
 # ---------- Input hashing ----------
