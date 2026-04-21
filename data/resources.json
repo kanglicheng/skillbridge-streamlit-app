@@ -1,0 +1,353 @@
+{
+  "python": [
+    {"title": "Python Official Tutorial", "url": "https://docs.python.org/3/tutorial/", "kind": "docs", "est_hours": 12},
+    {"title": "Real Python — Learning Path", "url": "https://realpython.com/learning-paths/python-basics/", "kind": "course", "est_hours": 20},
+    {"title": "Build a CLI tool with argparse", "url": "https://docs.python.org/3/howto/argparse.html", "kind": "project", "est_hours": 6}
+  ],
+  "javascript": [
+    {"title": "MDN JavaScript Guide", "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide", "kind": "docs", "est_hours": 15},
+    {"title": "JavaScript.info", "url": "https://javascript.info/", "kind": "course", "est_hours": 25},
+    {"title": "Build a to-do list SPA", "url": "https://developer.mozilla.org/en-US/docs/Learn/JavaScript", "kind": "project", "est_hours": 8}
+  ],
+  "typescript": [
+    {"title": "TypeScript Handbook", "url": "https://www.typescriptlang.org/docs/handbook/intro.html", "kind": "docs", "est_hours": 10},
+    {"title": "Total TypeScript Beginner", "url": "https://www.totaltypescript.com/tutorials", "kind": "course", "est_hours": 12},
+    {"title": "Port a JS project to TS", "url": "https://www.typescriptlang.org/docs/handbook/migrating-from-javascript.html", "kind": "project", "est_hours": 8}
+  ],
+  "go": [
+    {"title": "A Tour of Go", "url": "https://go.dev/tour/", "kind": "course", "est_hours": 8},
+    {"title": "Effective Go", "url": "https://go.dev/doc/effective_go", "kind": "docs", "est_hours": 6},
+    {"title": "Build an HTTP JSON API", "url": "https://go.dev/doc/tutorial/web-service-gin", "kind": "project", "est_hours": 10}
+  ],
+  "rust": [
+    {"title": "The Rust Programming Language", "url": "https://doc.rust-lang.org/book/", "kind": "docs", "est_hours": 25},
+    {"title": "Rustlings", "url": "https://github.com/rust-lang/rustlings", "kind": "project", "est_hours": 15}
+  ],
+  "java": [
+    {"title": "Java Tutorials (Oracle)", "url": "https://docs.oracle.com/javase/tutorial/", "kind": "docs", "est_hours": 20},
+    {"title": "Spring Guides", "url": "https://spring.io/guides", "kind": "project", "est_hours": 15}
+  ],
+  "sql": [
+    {"title": "PostgreSQL Tutorial", "url": "https://www.postgresqltutorial.com/", "kind": "course", "est_hours": 12},
+    {"title": "SQLZoo", "url": "https://sqlzoo.net/", "kind": "project", "est_hours": 8},
+    {"title": "Use The Index, Luke", "url": "https://use-the-index-luke.com/", "kind": "docs", "est_hours": 6}
+  ],
+  "bash": [
+    {"title": "Bash Guide for Beginners", "url": "https://tldp.org/LDP/Bash-Beginners-Guide/html/", "kind": "docs", "est_hours": 6},
+    {"title": "explainshell", "url": "https://explainshell.com/", "kind": "docs", "est_hours": 2}
+  ],
+  "html": [
+    {"title": "MDN HTML Basics", "url": "https://developer.mozilla.org/en-US/docs/Learn/HTML", "kind": "docs", "est_hours": 6}
+  ],
+  "css": [
+    {"title": "MDN CSS Basics", "url": "https://developer.mozilla.org/en-US/docs/Learn/CSS", "kind": "docs", "est_hours": 8},
+    {"title": "CSS Grid Garden", "url": "https://cssgridgarden.com/", "kind": "project", "est_hours": 3}
+  ],
+
+  "aws": [
+    {"title": "AWS Cloud Practitioner Essentials", "url": "https://aws.amazon.com/training/learn-about/cloud-practitioner/", "kind": "course", "est_hours": 10},
+    {"title": "AWS Well-Architected Framework", "url": "https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html", "kind": "docs", "est_hours": 8},
+    {"title": "Deploy a serverless API on AWS", "url": "https://aws.amazon.com/getting-started/hands-on/build-serverless-web-app-lambda-apigateway-s3-dynamodb-cognito/", "kind": "project", "est_hours": 12}
+  ],
+  "gcp": [
+    {"title": "Google Cloud Fundamentals", "url": "https://cloud.google.com/training/course/cloud-fundamentals", "kind": "course", "est_hours": 10},
+    {"title": "GCP Documentation", "url": "https://cloud.google.com/docs", "kind": "docs", "est_hours": 8}
+  ],
+  "azure": [
+    {"title": "Microsoft Learn: Azure Fundamentals", "url": "https://learn.microsoft.com/en-us/training/paths/azure-fundamentals/", "kind": "course", "est_hours": 10}
+  ],
+  "terraform": [
+    {"title": "HashiCorp Learn: Terraform", "url": "https://developer.hashicorp.com/terraform/tutorials", "kind": "course", "est_hours": 10},
+    {"title": "Provision AWS infra with Terraform", "url": "https://developer.hashicorp.com/terraform/tutorials/aws-get-started", "kind": "project", "est_hours": 8}
+  ],
+  "kubernetes": [
+    {"title": "Kubernetes Basics", "url": "https://kubernetes.io/docs/tutorials/kubernetes-basics/", "kind": "docs", "est_hours": 10},
+    {"title": "Kubernetes the Hard Way", "url": "https://github.com/kelseyhightower/kubernetes-the-hard-way", "kind": "project", "est_hours": 20},
+    {"title": "kubectl Cheat Sheet", "url": "https://kubernetes.io/docs/reference/kubectl/cheatsheet/", "kind": "docs", "est_hours": 2}
+  ],
+  "docker": [
+    {"title": "Docker Getting Started", "url": "https://docs.docker.com/get-started/", "kind": "docs", "est_hours": 6},
+    {"title": "Dockerize a Python app", "url": "https://docs.docker.com/language/python/", "kind": "project", "est_hours": 4}
+  ],
+  "helm": [
+    {"title": "Helm Documentation", "url": "https://helm.sh/docs/", "kind": "docs", "est_hours": 6}
+  ],
+  "lambda": [
+    {"title": "AWS Lambda Developer Guide", "url": "https://docs.aws.amazon.com/lambda/latest/dg/welcome.html", "kind": "docs", "est_hours": 6}
+  ],
+
+  "siem": [
+    {"title": "Intro to SIEM (SANS)", "url": "https://www.sans.org/blog/what-is-a-siem/", "kind": "docs", "est_hours": 4},
+    {"title": "Splunk Fundamentals 1", "url": "https://www.splunk.com/en_us/training/free-courses/splunk-fundamentals-1.html", "kind": "course", "est_hours": 10}
+  ],
+  "incident-response": [
+    {"title": "NIST SP 800-61 Incident Handling Guide", "url": "https://csrc.nist.gov/pubs/sp/800/61/r2/final", "kind": "docs", "est_hours": 6},
+    {"title": "TryHackMe: Incident Response", "url": "https://tryhackme.com/module/incident-response-and-forensics", "kind": "course", "est_hours": 12}
+  ],
+  "penetration-testing": [
+    {"title": "OWASP Testing Guide", "url": "https://owasp.org/www-project-web-security-testing-guide/", "kind": "docs", "est_hours": 10},
+    {"title": "HackTheBox Starting Point", "url": "https://www.hackthebox.com/starting-point", "kind": "project", "est_hours": 20}
+  ],
+  "vulnerability-management": [
+    {"title": "CISA Vulnerability Management Guide", "url": "https://www.cisa.gov/topics/cyber-threats-and-advisories/vulnerability-management", "kind": "docs", "est_hours": 4}
+  ],
+  "iam": [
+    {"title": "AWS IAM User Guide", "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html", "kind": "docs", "est_hours": 6}
+  ],
+  "owasp": [
+    {"title": "OWASP Top 10", "url": "https://owasp.org/www-project-top-ten/", "kind": "docs", "est_hours": 6},
+    {"title": "WebGoat", "url": "https://owasp.org/www-project-webgoat/", "kind": "project", "est_hours": 15}
+  ],
+  "compliance": [
+    {"title": "SOC 2 overview (AICPA)", "url": "https://www.aicpa-cima.com/resources/landing/system-and-organization-controls-soc-suite-of-services", "kind": "docs", "est_hours": 4}
+  ],
+  "splunk": [
+    {"title": "Splunk Search Tutorial", "url": "https://docs.splunk.com/Documentation/Splunk/latest/SearchTutorial/WelcometotheSearchTutorial", "kind": "docs", "est_hours": 8}
+  ],
+  "threat-modeling": [
+    {"title": "Threat Modeling Manifesto", "url": "https://www.threatmodelingmanifesto.org/", "kind": "docs", "est_hours": 3},
+    {"title": "STRIDE Threat Model walkthrough", "url": "https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats", "kind": "docs", "est_hours": 4}
+  ],
+  "cryptography": [
+    {"title": "Cryptography I (Stanford, Coursera)", "url": "https://www.coursera.org/learn/crypto", "kind": "course", "est_hours": 30}
+  ],
+  "network-security": [
+    {"title": "Network Security Essentials", "url": "https://www.cloudflare.com/learning/security/what-is-network-security/", "kind": "docs", "est_hours": 4}
+  ],
+
+  "postgresql": [
+    {"title": "PostgreSQL Tutorial", "url": "https://www.postgresqltutorial.com/", "kind": "course", "est_hours": 12},
+    {"title": "Postgres Internals (Bruce Momjian)", "url": "https://momjian.us/main/presentations/internals.html", "kind": "docs", "est_hours": 6}
+  ],
+  "mongodb": [
+    {"title": "MongoDB University M001", "url": "https://learn.mongodb.com/courses/m001-mongodb-basics", "kind": "course", "est_hours": 10}
+  ],
+  "redis": [
+    {"title": "Redis Quick Start", "url": "https://redis.io/docs/latest/get-started/", "kind": "docs", "est_hours": 4}
+  ],
+  "elasticsearch": [
+    {"title": "Elasticsearch: The Definitive Guide", "url": "https://www.elastic.co/guide/en/elasticsearch/guide/current/index.html", "kind": "docs", "est_hours": 12}
+  ],
+  "snowflake": [
+    {"title": "Snowflake Hands-On Essentials", "url": "https://learn.snowflake.com/", "kind": "course", "est_hours": 8}
+  ],
+  "bigquery": [
+    {"title": "BigQuery Fundamentals (Coursera)", "url": "https://www.coursera.org/learn/gcp-big-data-ml-fundamentals", "kind": "course", "est_hours": 10}
+  ],
+  "dbt": [
+    {"title": "dbt Fundamentals", "url": "https://courses.getdbt.com/courses/fundamentals", "kind": "course", "est_hours": 8},
+    {"title": "Build a dbt project from scratch", "url": "https://docs.getdbt.com/guides", "kind": "project", "est_hours": 8}
+  ],
+  "airflow": [
+    {"title": "Apache Airflow Tutorial", "url": "https://airflow.apache.org/docs/apache-airflow/stable/tutorial/index.html", "kind": "docs", "est_hours": 6}
+  ],
+  "spark": [
+    {"title": "Spark: The Definitive Guide", "url": "https://spark.apache.org/docs/latest/quick-start.html", "kind": "docs", "est_hours": 10}
+  ],
+  "kafka": [
+    {"title": "Kafka Quickstart", "url": "https://kafka.apache.org/quickstart", "kind": "docs", "est_hours": 4},
+    {"title": "Confluent Apache Kafka 101", "url": "https://developer.confluent.io/courses/apache-kafka/events/", "kind": "course", "est_hours": 8}
+  ],
+  "pandas": [
+    {"title": "10 minutes to pandas", "url": "https://pandas.pydata.org/docs/user_guide/10min.html", "kind": "docs", "est_hours": 3},
+    {"title": "Pandas Cookbook", "url": "https://pandas.pydata.org/docs/user_guide/cookbook.html", "kind": "docs", "est_hours": 8}
+  ],
+  "numpy": [
+    {"title": "NumPy Quickstart", "url": "https://numpy.org/doc/stable/user/quickstart.html", "kind": "docs", "est_hours": 4}
+  ],
+  "etl": [
+    {"title": "The Data Engineering Cookbook", "url": "https://github.com/andkret/Cookbook", "kind": "docs", "est_hours": 10}
+  ],
+  "data-modeling": [
+    {"title": "Kimball Dimensional Modeling", "url": "https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/", "kind": "docs", "est_hours": 8}
+  ],
+  "tableau": [
+    {"title": "Tableau Free Training", "url": "https://www.tableau.com/learn/training", "kind": "course", "est_hours": 10}
+  ],
+
+  "react": [
+    {"title": "React Official Tutorial", "url": "https://react.dev/learn", "kind": "docs", "est_hours": 10},
+    {"title": "Build a hooks-based dashboard", "url": "https://react.dev/learn/thinking-in-react", "kind": "project", "est_hours": 10}
+  ],
+  "nextjs": [
+    {"title": "Next.js Learn", "url": "https://nextjs.org/learn", "kind": "course", "est_hours": 12}
+  ],
+  "django": [
+    {"title": "Django Getting Started", "url": "https://docs.djangoproject.com/en/stable/intro/", "kind": "docs", "est_hours": 10}
+  ],
+  "flask": [
+    {"title": "Flask Quickstart", "url": "https://flask.palletsprojects.com/en/latest/quickstart/", "kind": "docs", "est_hours": 4}
+  ],
+  "fastapi": [
+    {"title": "FastAPI Tutorial", "url": "https://fastapi.tiangolo.com/tutorial/", "kind": "docs", "est_hours": 8},
+    {"title": "Build a REST API with FastAPI", "url": "https://fastapi.tiangolo.com/tutorial/first-steps/", "kind": "project", "est_hours": 6}
+  ],
+  "nodejs": [
+    {"title": "Node.js Guides", "url": "https://nodejs.org/en/docs/guides", "kind": "docs", "est_hours": 8}
+  ],
+  "express": [
+    {"title": "Express Getting Started", "url": "https://expressjs.com/en/starter/installing.html", "kind": "docs", "est_hours": 4}
+  ],
+  "spring": [
+    {"title": "Spring Boot Guides", "url": "https://spring.io/guides/gs/spring-boot", "kind": "project", "est_hours": 8}
+  ],
+  "graphql": [
+    {"title": "Introduction to GraphQL", "url": "https://graphql.org/learn/", "kind": "docs", "est_hours": 6}
+  ],
+  "rest": [
+    {"title": "REST API Tutorial", "url": "https://restfulapi.net/", "kind": "docs", "est_hours": 4}
+  ],
+
+  "ci-cd": [
+    {"title": "CI/CD Fundamentals (GitLab)", "url": "https://about.gitlab.com/topics/ci-cd/", "kind": "docs", "est_hours": 4}
+  ],
+  "github-actions": [
+    {"title": "GitHub Actions Quickstart", "url": "https://docs.github.com/en/actions/quickstart", "kind": "docs", "est_hours": 3},
+    {"title": "Build a CI pipeline with Actions", "url": "https://docs.github.com/en/actions/automating-builds-and-tests", "kind": "project", "est_hours": 6}
+  ],
+  "jenkins": [
+    {"title": "Jenkins Handbook", "url": "https://www.jenkins.io/doc/book/", "kind": "docs", "est_hours": 8}
+  ],
+  "ansible": [
+    {"title": "Ansible Getting Started", "url": "https://docs.ansible.com/ansible/latest/getting_started/index.html", "kind": "docs", "est_hours": 6}
+  ],
+  "prometheus": [
+    {"title": "Prometheus Getting Started", "url": "https://prometheus.io/docs/prometheus/latest/getting_started/", "kind": "docs", "est_hours": 4}
+  ],
+  "grafana": [
+    {"title": "Grafana Fundamentals", "url": "https://grafana.com/tutorials/grafana-fundamentals/", "kind": "course", "est_hours": 4}
+  ],
+  "linux": [
+    {"title": "Linux Journey", "url": "https://linuxjourney.com/", "kind": "course", "est_hours": 12}
+  ],
+  "git": [
+    {"title": "Pro Git Book", "url": "https://git-scm.com/book/en/v2", "kind": "docs", "est_hours": 10}
+  ],
+  "observability": [
+    {"title": "Observability Engineering (Honeycomb)", "url": "https://www.honeycomb.io/observability-engineering-oreilly-book-2022", "kind": "docs", "est_hours": 8}
+  ],
+  "sre": [
+    {"title": "Google SRE Book", "url": "https://sre.google/sre-book/table-of-contents/", "kind": "docs", "est_hours": 20}
+  ],
+
+  "scikit-learn": [
+    {"title": "Scikit-learn User Guide", "url": "https://scikit-learn.org/stable/user_guide.html", "kind": "docs", "est_hours": 15},
+    {"title": "Build a classifier on UCI dataset", "url": "https://scikit-learn.org/stable/tutorial/basic/tutorial.html", "kind": "project", "est_hours": 6}
+  ],
+  "pytorch": [
+    {"title": "PyTorch Tutorials", "url": "https://pytorch.org/tutorials/", "kind": "course", "est_hours": 20}
+  ],
+  "tensorflow": [
+    {"title": "TensorFlow Learn", "url": "https://www.tensorflow.org/learn", "kind": "course", "est_hours": 20}
+  ],
+  "huggingface": [
+    {"title": "Hugging Face Course", "url": "https://huggingface.co/learn/nlp-course", "kind": "course", "est_hours": 15}
+  ],
+  "mlflow": [
+    {"title": "MLflow Quickstart", "url": "https://mlflow.org/docs/latest/quickstart.html", "kind": "docs", "est_hours": 4}
+  ],
+  "nlp": [
+    {"title": "Speech and Language Processing (Jurafsky)", "url": "https://web.stanford.edu/~jurafsky/slp3/", "kind": "docs", "est_hours": 30}
+  ],
+  "deep-learning": [
+    {"title": "Deep Learning Specialization (Coursera)", "url": "https://www.coursera.org/specializations/deep-learning", "kind": "course", "est_hours": 50}
+  ],
+  "feature-engineering": [
+    {"title": "Feature Engineering for ML (O'Reilly)", "url": "https://www.oreilly.com/library/view/feature-engineering-for/9781491953235/", "kind": "docs", "est_hours": 12}
+  ],
+  "model-deployment": [
+    {"title": "ML Engineering in Action (Manning)", "url": "https://www.manning.com/books/machine-learning-engineering-in-action", "kind": "docs", "est_hours": 15}
+  ],
+  "statistics": [
+    {"title": "Think Stats 2e", "url": "https://greenteapress.com/wp/think-stats-2e/", "kind": "docs", "est_hours": 15}
+  ],
+  "ab-testing": [
+    {"title": "Trustworthy Online Controlled Experiments", "url": "https://experimentguide.com/", "kind": "docs", "est_hours": 10}
+  ],
+
+  "agile": [
+    {"title": "Agile Manifesto + Principles", "url": "https://agilemanifesto.org/principles.html", "kind": "docs", "est_hours": 1}
+  ],
+  "scrum": [
+    {"title": "The Scrum Guide", "url": "https://scrumguides.org/scrum-guide.html", "kind": "docs", "est_hours": 2}
+  ],
+  "communication": [
+    {"title": "Writing Well for Engineers", "url": "https://stripe.press/", "kind": "docs", "est_hours": 4}
+  ],
+  "technical-writing": [
+    {"title": "Google Technical Writing Course", "url": "https://developers.google.com/tech-writing", "kind": "course", "est_hours": 6}
+  ],
+
+  "leadership": [
+    {"title": "StaffEng — Staff Archetypes", "url": "https://staffeng.com/guides/staff-archetypes/", "kind": "docs", "est_hours": 2},
+    {"title": "StaffEng — Stories & Guides", "url": "https://staffeng.com/guides/", "kind": "docs", "est_hours": 8}
+  ],
+  "mentoring": [
+    {"title": "StaffEng — Guides on Mentorship & Sponsorship", "url": "https://staffeng.com/guides/", "kind": "docs", "est_hours": 4}
+  ],
+  "looker": [
+    {"title": "Looker Documentation", "url": "https://cloud.google.com/looker/docs", "kind": "docs", "est_hours": 8},
+    {"title": "Build a LookML Model", "url": "https://cloud.google.com/looker/docs/intro-to-lookml", "kind": "project", "est_hours": 6}
+  ],
+  "redux": [
+    {"title": "Redux Essentials Tutorial", "url": "https://redux.js.org/tutorials/essentials/part-1-overview-concepts", "kind": "course", "est_hours": 8},
+    {"title": "Redux Toolkit Docs", "url": "https://redux-toolkit.js.org/introduction/getting-started", "kind": "docs", "est_hours": 4}
+  ],
+  "tailwind": [
+    {"title": "Tailwind CSS Documentation", "url": "https://tailwindcss.com/docs", "kind": "docs", "est_hours": 6},
+    {"title": "Tailwind Play — Build a Landing Page", "url": "https://play.tailwindcss.com/", "kind": "project", "est_hours": 4}
+  ],
+  "powerbi": [
+    {"title": "Power BI Learn Hub", "url": "https://learn.microsoft.com/en-us/power-bi/", "kind": "docs", "est_hours": 8},
+    {"title": "Guided Learning: Power BI", "url": "https://learn.microsoft.com/en-us/training/powerplatform/power-bi", "kind": "course", "est_hours": 12}
+  ],
+  "grpc": [
+    {"title": "gRPC Documentation", "url": "https://grpc.io/docs/", "kind": "docs", "est_hours": 4},
+    {"title": "Build a gRPC Service (Quick Start)", "url": "https://grpc.io/docs/languages/python/quickstart/", "kind": "project", "est_hours": 5}
+  ],
+  "jupyter": [
+    {"title": "Project Jupyter Documentation", "url": "https://docs.jupyter.org/en/latest/", "kind": "docs", "est_hours": 3}
+  ],
+  "soc": [
+    {"title": "NIST SP 800-61r2 — Incident Handling Guide", "url": "https://csrc.nist.gov/pubs/sp/800/61/r2/final", "kind": "docs", "est_hours": 6},
+    {"title": "MITRE ATT&CK Framework", "url": "https://attack.mitre.org/", "kind": "docs", "est_hours": 8}
+  ],
+  "angular": [
+    {"title": "Angular Official Docs", "url": "https://angular.dev/overview", "kind": "docs", "est_hours": 12},
+    {"title": "Angular Tour of Heroes", "url": "https://angular.dev/tutorials/first-app", "kind": "project", "est_hours": 8}
+  ],
+  "computer-vision": [
+    {"title": "Stanford CS231n — CNNs for Visual Recognition", "url": "https://cs231n.stanford.edu/", "kind": "course", "est_hours": 25},
+    {"title": "OpenCV Tutorials", "url": "https://docs.opencv.org/4.x/d9/df8/tutorial_root.html", "kind": "docs", "est_hours": 10}
+  ],
+  "s3": [
+    {"title": "Amazon S3 User Guide", "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html", "kind": "docs", "est_hours": 6}
+  ],
+  "vue": [
+    {"title": "Vue.js Guide", "url": "https://vuejs.org/guide/introduction.html", "kind": "docs", "est_hours": 10},
+    {"title": "Build a Vue 3 SPA", "url": "https://vuejs.org/tutorial/", "kind": "project", "est_hours": 6}
+  ],
+  "cloudwatch": [
+    {"title": "Amazon CloudWatch User Guide", "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html", "kind": "docs", "est_hours": 4}
+  ],
+  "datadog": [
+    {"title": "Datadog Getting Started", "url": "https://docs.datadoghq.com/getting_started/", "kind": "docs", "est_hours": 4}
+  ],
+  "ec2": [
+    {"title": "Amazon EC2 User Guide", "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html", "kind": "docs", "est_hours": 6}
+  ],
+  "nmap": [
+    {"title": "Nmap Reference Guide (Book)", "url": "https://nmap.org/book/", "kind": "docs", "est_hours": 8}
+  ],
+  "rails": [
+    {"title": "Ruby on Rails Guides", "url": "https://guides.rubyonrails.org/", "kind": "docs", "est_hours": 15},
+    {"title": "Getting Started with Rails", "url": "https://guides.rubyonrails.org/getting_started.html", "kind": "project", "est_hours": 6}
+  ],
+  "redshift": [
+    {"title": "Amazon Redshift Getting Started", "url": "https://docs.aws.amazon.com/redshift/latest/gsg/getting-started.html", "kind": "docs", "est_hours": 5}
+  ],
+  "ruby": [
+    {"title": "Ruby Official Documentation", "url": "https://www.ruby-lang.org/en/documentation/", "kind": "docs", "est_hours": 4},
+    {"title": "Ruby in Twenty Minutes", "url": "https://www.ruby-lang.org/en/documentation/quickstart/", "kind": "course", "est_hours": 2}
+  ]
+}

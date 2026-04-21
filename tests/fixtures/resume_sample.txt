@@ -1,0 +1,24 @@
+Jane Doe
+Software Engineer | jane@example.com
+
+EXPERIENCE
+
+Acme Corp — Backend Engineer (2021–2024)
+- Built and maintained Python services using FastAPI and PostgreSQL.
+- Containerized workloads with Docker and deployed to Kubernetes (k8s).
+- Wrote Terraform to provision AWS resources (S3, Lambda, IAM roles).
+- Contributed to CI/CD pipelines using GitHub Actions.
+- Mentored two junior engineers; led incident response on P1s.
+
+Globex — Junior Developer (2019–2021)
+- Wrote REST APIs in Node.js / Express backed by MongoDB.
+- Collaborated with frontend team using React and TypeScript.
+- Participated in agile ceremonies; owned a small analytics dashboard in SQL.
+
+EDUCATION
+BSc Computer Science, State University, 2019
+
+SKILLS
+Python, JavaScript, TypeScript, SQL, Docker, Kubernetes, Terraform,
+Amazon Web Services, PostgreSQL, MongoDB, FastAPI, Express, React,
+GitHub Actions, Git, Linux, Agile, Mentoring
