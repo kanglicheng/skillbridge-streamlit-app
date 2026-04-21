@@ -9,6 +9,7 @@ import hashlib
 import io
 import logging
 import traceback
+from collections import deque
 
 import pandas as pd
 import streamlit as st
@@ -22,7 +23,7 @@ from src.roadmap import generate_roadmap
 from src.skills_extractor import extract_skills
 from src.text_safety import escape_markdown
 
-MAX_UPLOAD_BYTES = 5 * 1024 * 1024  # 5 MB — resumes are tiny; cap blocks PDF DoS.
+MAX_UPLOAD_BYTES = 5 * 1_000_000  # 5 MB (decimal) — matches README and the displayed label.
 
 STEPS = ("1. Input", "2. Analysis", "3. Roadmap & What-If")
 
@@ -69,14 +70,15 @@ def render_sidebar() -> Settings:
     return Settings.load(use_fallbacks_only=st.session_state["use_fallbacks_only"])
 
 
-_LOG_BUFFER: list[str] = []
+# deque with maxlen gives us atomic append + automatic bounded-size trim, so the
+# manual slice-drop is unnecessary and the buffer is safe under concurrent
+# Streamlit reruns / background threads that might emit log records.
+_LOG_BUFFER: deque[str] = deque(maxlen=200)
 
 
 class _BufferHandler(logging.Handler):
     def emit(self, record: logging.LogRecord) -> None:
         _LOG_BUFFER.append(self.format(record))
-        if len(_LOG_BUFFER) > 200:
-            del _LOG_BUFFER[:100]
 
 
 def _install_buffer_handler() -> None:
@@ -89,7 +91,9 @@ def _install_buffer_handler() -> None:
 
 
 def _tail_log(n: int = 30) -> str:
-    return "\n".join(_LOG_BUFFER[-n:]) or "(no log lines yet)"
+    # deque doesn't support negative slicing — snapshot via list() then slice.
+    lines = list(_LOG_BUFFER)[-n:]
+    return "\n".join(lines) or "(no log lines yet)"
 
 
 # ---------- Input hashing ----------
@@ -126,14 +130,14 @@ def render_input_tab(settings: Settings) -> None:
 
     if st.button("Analyze", type="primary"):
         resume_text = _resolve_text(resume_pdf, resume_text_input, "resume")
-        portfolio_text = _resolve_text(portfolio_pdf, portfolio_text_input, "portfolio", required=False)
+        portfolio_text = _resolve_text(portfolio_pdf, portfolio_text_input, "portfolio")
         if not resume_text:
             st.warning("Please upload a resume PDF or paste resume text.")
             return
         _run_analysis(resume_text, portfolio_text, target_role, settings)
 
 
-def _resolve_text(file, text: str, label: str, required: bool = True) -> str:
+def _resolve_text(file, text: str, label: str) -> str:
     if file is not None:
         size = getattr(file, "size", 0) or 0
         if size > MAX_UPLOAD_BYTES:
@@ -157,7 +161,7 @@ def _resolve_text(file, text: str, label: str, required: bool = True) -> str:
             log.exception("Unexpected PDF failure for %s", label)
             st.warning(f"Could not read {label} PDF; using pasted text if provided.")
             return text.strip()
-    return text.strip() if required or text.strip() else ""
+    return text.strip()
 
 
 def _run_analysis(resume_text: str, portfolio_text: str, target_role: str, settings: Settings) -> None:

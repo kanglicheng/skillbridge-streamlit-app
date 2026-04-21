@@ -136,19 +136,25 @@ def extract_skills(text: str, taxonomy: list[dict], settings: Settings) -> Extra
     canonical_skills = canonicalize(raw_skills, taxonomy)
 
     # Map evidence keys through canonicalization too (OpenAI evidence may use aliases).
-    # Snippets are only retained if they literally appear in the resume — the model is
-    # *claiming* these come from the text, but the prompt doesn't constrain it to copy
-    # verbatim. Dropping non-present snippets prevents surfacing fabricated evidence in
-    # the UI (belt-and-suspenders alongside escape_markdown at render time).
+    # Snippets are retained only if their whitespace-normalized form appears in the
+    # resume — the model is *claiming* these come from the text, but the prompt doesn't
+    # constrain it to copy verbatim. Dropping non-present snippets prevents surfacing
+    # fabricated evidence (belt-and-suspenders alongside escape_markdown at render time).
+    #
+    # Normalization matters on both sides: _fallback_extract collapses newlines to
+    # spaces when building its window (see above), so a raw substring check against
+    # the original text would reject almost every multi-line fallback snippet. Flattening
+    # whitespace on both sides also tolerates minor rewrites from the OpenAI path.
     canon_evidence: dict[str, str] = {}
     if raw_evidence:
         index = _build_alias_index(taxonomy)
-        text_lower = text.lower()
+        text_flat = re.sub(r"\s+", " ", text.lower())
         for key, snippet in raw_evidence.items():
             canon = index.get(key.strip().lower())
             if not canon or canon not in canonical_skills or canon in canon_evidence:
                 continue
-            if not snippet or snippet.strip().lower() not in text_lower:
+            flat = re.sub(r"\s+", " ", (snippet or "").lower()).strip()
+            if not flat or flat not in text_flat:
                 log.info("Dropping evidence snippet for %r: not present in resume text", canon)
                 continue
             canon_evidence[canon] = snippet

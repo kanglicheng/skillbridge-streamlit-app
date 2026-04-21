@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 
-_MD_SPECIAL = re.compile(r"([\\`*_{}\[\]()#+\-.!|>~=<>])")
+_MD_SPECIAL = re.compile(r"([\\`*_{}\[\]()#+\-.!|<>~=])")
 
 
 def escape_markdown(text: str) -> str:

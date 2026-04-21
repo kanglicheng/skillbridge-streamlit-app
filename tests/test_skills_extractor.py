@@ -69,6 +69,18 @@ def test_empty_text_returns_empty():
     assert extract_skills("   ", taxonomy, _no_openai_settings()).skills == []
 
 
+def test_evidence_retained_when_fallback_snippet_spans_lines():
+    """Regression guard: fallback snippets are built by slicing the resume with a ±40-char
+    window and collapsing newlines to spaces. The grounding check must tolerate that
+    whitespace rewrite, or multi-line-spanning snippets get dropped and the evidence
+    expander shows empty for most skills. Whitespace-normalizing both sides fixes it.
+    """
+    taxonomy = load_taxonomy()
+    text = (FIXTURES / "resume_sample.txt").read_text()
+    result = extract_skills(text, taxonomy, _no_openai_settings())
+    assert "python" in result.evidence
+
+
 def test_extract_skills_falls_back_when_openai_returns_none(monkeypatch):
     """When _openai_extract returns None (malformed JSON, API error, etc.), the
     public entrypoint must fall through to the deterministic rule-based path and
