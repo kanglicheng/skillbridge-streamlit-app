@@ -16,7 +16,7 @@ SKILLS_EXTRACTION_SYSTEM = (
 SKILLS_EXTRACTION_USER_TEMPLATE = """Taxonomy hints (canonical IDs, pick from these or their common synonyms):
 {hints}
 
-Resume text:
+Candidate text (resume, with optional portfolio appended):
 \"\"\"
 {resume_text}
 \"\"\"
@@ -24,7 +24,7 @@ Resume text:
 Return JSON with exactly this shape:
 {{
   "skills": ["<canonical_or_synonym>", ...],
-  "evidence": {{ "<skill>": "<short snippet from resume showing this skill>", ... }}
+  "evidence": {{ "<skill>": "<short snippet from the text showing this skill>", ... }}
 }}
 Include evidence only when you can cite a snippet. Max 30 skills."""
 

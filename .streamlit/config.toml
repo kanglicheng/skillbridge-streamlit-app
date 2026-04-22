@@ -1,0 +1,6 @@
+# Server-side cap for file uploads. Mirrors MAX_UPLOAD_BYTES in app.py so the
+# uploader UI shows "Limit 5MB per file" and Streamlit rejects oversize uploads
+# before the request body reaches our handler. The post-upload size check in
+# _resolve_text is kept as defense-in-depth in case this config drifts.
+[server]
+maxUploadSize = 5

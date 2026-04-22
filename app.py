@@ -125,18 +125,29 @@ def _input_hash(
 
 # ---------- Tabs ----------
 def render_input_tab(settings: Settings) -> None:
-    st.subheader("1. Input your resume")
+    st.subheader("Step 1 · Your resume")
+    st.caption("Upload or paste your resume, pick a target role, then **Analyze**.")
+
     col_a, col_b = st.columns(2)
     with col_a:
-        resume_pdf = st.file_uploader("Resume PDF (optional)", type=["pdf"], key="resume_pdf")
-        resume_text_input = st.text_area("...or paste resume text", height=220, key="resume_text_input")
+        st.markdown("**Resume**")
+        resume_pdf = st.file_uploader(
+            "Resume PDF", type=["pdf"], key="resume_pdf", label_visibility="collapsed"
+        )
+        resume_text_input = st.text_area("…or paste resume text", height=220, key="resume_text_input")
     with col_b:
-        portfolio_pdf = st.file_uploader("Portfolio / projects PDF (optional)", type=["pdf"], key="portfolio_pdf")
-        portfolio_text_input = st.text_area("...or paste portfolio text", height=220, key="portfolio_text_input")
+        st.markdown("**Portfolio** &nbsp; _(optional — adds to extracted skills)_")
+        portfolio_pdf = st.file_uploader(
+            "Portfolio PDF", type=["pdf"], key="portfolio_pdf", label_visibility="collapsed"
+        )
+        portfolio_text_input = st.text_area("…or paste portfolio text", height=220, key="portfolio_text_input")
 
-    target_role = st.selectbox("Target role", TARGET_ROLES, key="target_role")
+    target_role = st.selectbox(
+        "Target role", TARGET_ROLES, key="target_role",
+        help="We'll score your fit for this role and list the missing skills.",
+    )
 
-    if st.button("Analyze", type="primary"):
+    if st.button("Analyze →", type="primary"):
         resume_text = _resolve_text(resume_pdf, resume_text_input, "resume")
         portfolio_text = _resolve_text(portfolio_pdf, portfolio_text_input, "portfolio")
         if not resume_text:
@@ -182,11 +193,18 @@ def _run_analysis(resume_text: str, portfolio_text: str, target_role: str, setti
 
     with st.spinner("Extracting skills and scoring..."):
         taxonomy = load_taxonomy()
-        extraction = extract_skills(resume_text, taxonomy, settings)
+        # Run extraction over BOTH resume and portfolio. Portfolio prose was
+        # previously only fed to the classifier and the roadmap LLM context,
+        # so a skill mentioned only in the portfolio (e.g., Terraform in a
+        # project description) would never enter `extraction.skills` and would
+        # then surface as a "missing" gap. The two inputs are joined so the
+        # rule-based scanner and the OpenAI extractor both see everything.
+        candidate_text = resume_text + (("\n\n" + portfolio_text) if portfolio_text else "")
+        extraction = extract_skills(candidate_text, taxonomy, settings)
         clf = get_classifier()
         jobs_df = load_jobs()
-        scoring = score(extraction.skills, target_role, clf, jobs_df, portfolio_text)
-        probs = probabilities_table(clf, extraction.skills, portfolio_text)
+        scoring = score(extraction.skills, target_role, clf, jobs_df, resume_text, portfolio_text)
+        probs = probabilities_table(clf, extraction.skills, resume_text, portfolio_text)
         gaps = missing_skills(extraction.skills, target_role, jobs_df)
 
     st.session_state["analysis"] = {
@@ -212,13 +230,19 @@ def _run_analysis(resume_text: str, portfolio_text: str, target_role: str, setti
 def render_analysis_tab() -> None:
     analysis = st.session_state.get("analysis")
     if not analysis:
-        st.info("Run an analysis from the **Input** tab first.")
+        st.info("Run **Step 1 · Your resume** first.")
         return
 
+    st.subheader("Step 2 · Your fit")
+    st.caption("Skills we found, your role match, and what's missing. Step 3 turns the gaps into a plan.")
+
     extraction = analysis["extraction"]
-    st.subheader("Extracted skills")
-    badge = "🟢 openai" if extraction.source == "openai" else "🟡 fallback"
-    st.caption(f"Source: {badge}")
+    st.markdown("**Extracted skills**")
+    badge = "🟢 OpenAI + rule-based" if extraction.source == "openai" else "🟡 rule-based only"
+    st.caption(
+        f"Source: {badge}",
+        help="OpenAI infers skills from context; the rule-based scanner is always run as a safety net.",
+    )
     if extraction.skills:
         st.write(" ".join(f"`{s}`" for s in extraction.skills))
     else:
@@ -230,23 +254,26 @@ def render_analysis_tab() -> None:
                 st.markdown(f"**{skill}** — _{escape_markdown(snippet)}_")
 
     st.divider()
-    st.subheader("Role probabilities")
+    st.markdown("**Role probabilities**")
+    st.caption("How the classifier ranks you across all roles.")
     probs_df = pd.DataFrame(analysis["probs"], columns=["role", "probability"]).set_index("role")
     st.bar_chart(probs_df)
 
     st.divider()
-    st.subheader(f"Fit vs {analysis['target_role']}")
+    st.markdown(f"**Fit vs {analysis['target_role']}**")
     s = analysis["score"]
     col1, col2, col3 = st.columns(3)
-    col1.metric("Composite", f"{s['composite']:.2f}",
-                help="0.4 × classifier probability + 0.6 × frequency-weighted skill overlap.")
-    col2.metric("Classifier prob.", f"{s['classifier_prob']:.2f}")
-    col3.metric("Skill overlap", f"{s['skill_overlap_pct']:.2f}",
-                help="Fraction of the role's weighted skill demand that your resume covers.")
+    col1.metric("Overall fit", f"{s['composite']:.2f}",
+                help="0–1. Composite of classifier probability (0.4) and skill overlap (0.6).")
+    col2.metric("Role match (model)", f"{s['classifier_prob']:.2f}",
+                help="0–1. Classifier probability for the target role.")
+    col3.metric("Skills covered", f"{s['skill_overlap_pct']:.2f}",
+                help="0–1. Fraction of the role's weighted skill demand your resume covers.")
 
     st.divider()
-    st.subheader("Missing skills for this role")
+    st.markdown("**Missing skills for this role**")
     if analysis["gaps"]:
+        st.caption("Required by jobs in this role but not found in your resume — head to Step 3 to plan them.")
         gap_df = pd.DataFrame(analysis["gaps"], columns=["skill", "jobs requiring it"])
         st.dataframe(gap_df, width="stretch", hide_index=True)
     else:
@@ -256,21 +283,25 @@ def render_analysis_tab() -> None:
 def render_roadmap_tab(settings: Settings) -> None:
     analysis = st.session_state.get("analysis")
     if not analysis:
-        st.info("Run an analysis from the **Input** tab first.")
+        st.info("Run **Step 1 · Your resume** first.")
         return
 
     gaps = analysis["gaps"]
     current_skills: list[str] = analysis["extraction"].skills
     target_role: str = analysis["target_role"]
+    resume_text: str = analysis["resume_text"]
     portfolio_text: str = analysis["portfolio_text"]
 
+    st.subheader("Step 3 · Plan your gaps")
     if not gaps:
-        st.success("No gaps — nothing to roadmap.")
+        st.success("You already match every required skill for this role — nothing to plan.")
         return
 
-    st.subheader("What-If simulation")
+    st.caption("Try the what-if to see how learning specific skills moves your fit, then follow the roadmap below.")
+
+    st.markdown("**What-If simulation**")
     selected = st.multiselect(
-        "Pretend you've learned these skills:",
+        "Pick skills to simulate learning — your fit scores update below.",
         options=[s for s, _ in gaps],
         default=[s for s, _ in gaps[:3]],
         key="whatif_selection",
@@ -278,15 +309,16 @@ def render_roadmap_tab(settings: Settings) -> None:
 
     jobs_df = load_jobs()
     clf = get_classifier()
-    wi = what_if(current_skills, selected, target_role, clf, jobs_df, portfolio_text)
+    wi = what_if(current_skills, selected, target_role, clf, jobs_df, resume_text, portfolio_text)
     c1, c2, c3 = st.columns(3)
-    c1.metric("Composite (now)", f"{wi['base']['composite']:.2f}")
-    c2.metric("Composite (with additions)", f"{wi['simulated']['composite']:.2f}",
+    c1.metric("Fit now", f"{wi['base']['composite']:.2f}")
+    c2.metric("Fit with additions", f"{wi['simulated']['composite']:.2f}",
               delta=f"{wi['delta']['composite']:+.2f}")
-    c3.metric("Skill overlap Δ", f"{wi['delta']['skill_overlap_pct']:+.2f}")
+    c3.metric("Skills-covered Δ", f"{wi['delta']['skill_overlap_pct']:+.2f}")
 
     st.divider()
-    st.subheader("Learning roadmap")
+    st.markdown("**Learning roadmap**")
+    st.caption("Ordered by impact for this role. Each skill links to curated resources.")
     with st.spinner("Building roadmap..."):
         roadmap = generate_roadmap(
             target_role, current_skills, gaps, portfolio_text, settings

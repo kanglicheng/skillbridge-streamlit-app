@@ -90,16 +90,19 @@ def get_classifier() -> Classifier:
 
 
 def predict_proba(clf: Classifier, skills: Iterable[str], extra_text: str = "") -> dict[str, float]:
-    """Return class_name → probability for a skills list + optional free text (e.g., portfolio).
+    """Return class_name → probability for a skills list + optional free text.
 
-    Train/inference asymmetry (deliberate, not a bug): training documents are
-    description + pipe-delimited skills, inference input is space-joined skill
-    tokens (+ optional portfolio text). The TF-IDF vocabulary overlaps on skill
-    terms, so the classifier is effectively using the skill-token slice of what
-    it learned. This is why the composite score weights overlap (0.6) above the
-    classifier (0.4) — see config.py. A production version would unify the
-    representation (e.g., train on canonical skill IDs only, or featurize
-    resumes into pseudo-descriptions at inference).
+    `extra_text` is concatenated to the skills before vectorization so the
+    TF-IDF vocabulary picks up resume/portfolio prose that overlaps with the
+    training corpus (descriptions + required_skills). Callers in matcher.py
+    pass `resume_text + " " + portfolio_text`. Closes the obvious
+    train/inference asymmetry — training docs are prose, inference was
+    skill-tokens-only — without retraining, since the vectorizer is fit on
+    prose vocabulary already.
+
+    The composite score still weights overlap (0.6) above the classifier
+    (0.4) — see config.py — because resume prose is noisier than curated
+    job descriptions and we don't want the classifier to dominate.
     """
     query = " ".join(skills) + " " + extra_text
     X = clf.vectorizer.transform([query])

@@ -81,6 +81,68 @@ def test_evidence_retained_when_fallback_snippet_spans_lines():
     assert "python" in result.evidence
 
 
+def test_extract_skills_unions_openai_with_rule_based_for_missed_tokens(monkeypatch):
+    """Regression guard: a verbatim resume token (e.g., a one-line 'Kafka' bullet)
+    must surface even when OpenAI's extraction skips it. Previously the rule-based
+    pass only ran if OpenAI returned nothing; observed in practice that OpenAI
+    would emit a long skills list while silently dropping a brand name on its own
+    line, so the gap analysis then flagged that skill as missing despite it being
+    in the resume. The union ensures the rule-based pass is always a floor.
+    """
+    import src.skills_extractor as extractor_module
+
+    taxonomy = load_taxonomy()
+    text = "Built event pipelines with Kafka and ran services in Python on AWS."
+    settings = Settings(openai_api_key="sk-fake", openai_model="gpt-4o-mini", use_fallbacks_only=False)
+
+    # Stub OpenAI to return a partial, kafka-less list.
+    monkeypatch.setattr(
+        extractor_module,
+        "_openai_extract",
+        lambda *a, **kw: (
+            ["python", "aws"],
+            {"python": "ran services in Python", "aws": "on AWS"},
+        ),
+    )
+
+    result = extract_skills(text, taxonomy, settings)
+    assert "kafka" in result.skills, "rule-based pass must catch verbatim 'Kafka'"
+    assert "python" in result.skills and "aws" in result.skills
+    # OpenAI contributed → source still labels it as openai.
+    assert result.source == "openai"
+
+
+def test_fallback_evidence_recovers_when_openai_snippet_is_fabricated(monkeypatch):
+    """If OpenAI's snippet for a skill fails the grounding check (not present in
+    the resume), but the rule-based pass found that same skill with a real
+    resume slice, the UI must show the fallback snippet — not empty evidence.
+    Pre-fix, OpenAI's snippet won the merge via setdefault, then grounding
+    dropped it, and the recoverable rule-based snippet was silently lost.
+    """
+    import src.skills_extractor as extractor_module
+
+    taxonomy = load_taxonomy()
+    text = "Built event pipelines with Kafka and ran services in Python on AWS."
+    settings = Settings(openai_api_key="sk-fake", openai_model="gpt-4o-mini", use_fallbacks_only=False)
+
+    # OpenAI returns python with a fabricated snippet not present in the resume.
+    monkeypatch.setattr(
+        extractor_module,
+        "_openai_extract",
+        lambda *a, **kw: (
+            ["python"],
+            {"python": "I am an expert Python engineer with 10 years experience"},
+        ),
+    )
+
+    result = extract_skills(text, taxonomy, settings)
+    assert "python" in result.skills
+    assert "python" in result.evidence, "fallback snippet should backfill after grounding drop"
+    # The retained snippet must be the resume slice, not OpenAI's fabrication.
+    assert "10 years experience" not in result.evidence["python"]
+    assert "python" in result.evidence["python"].lower()
+
+
 def test_extract_skills_falls_back_when_openai_returns_none(monkeypatch):
     """When _openai_extract returns None (malformed JSON, API error, etc.), the
     public entrypoint must fall through to the deterministic rule-based path and

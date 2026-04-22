@@ -58,11 +58,12 @@ def _score_with_freq(
     target_role: str,
     clf: Classifier,
     freq: Counter,
+    resume_text: str,
     portfolio_text: str,
 ) -> Score:
     """Internal: score given a precomputed freq Counter. Lets what_if reuse freq
     across the base/simulated pair without recomputing per-role stats twice."""
-    probs = predict_proba(clf, skills_set, portfolio_text)
+    probs = predict_proba(clf, skills_set, resume_text + " " + portfolio_text)
     classifier_prob = float(probs.get(target_role, 0.0))
     overlap = _freq_weighted_overlap(skills_set, freq)
     composite = CLASSIFIER_WEIGHT * classifier_prob + OVERLAP_WEIGHT * overlap
@@ -74,10 +75,11 @@ def score(
     target_role: str,
     clf: Classifier,
     jobs_df: pd.DataFrame,
+    resume_text: str = "",
     portfolio_text: str = "",
 ) -> Score:
     freq = _required_skill_frequencies(jobs_df, target_role)
-    return _score_with_freq(set(skills), target_role, clf, freq, portfolio_text)
+    return _score_with_freq(set(skills), target_role, clf, freq, resume_text, portfolio_text)
 
 
 def missing_skills(
@@ -94,9 +96,14 @@ def missing_skills(
     return gaps[:limit]
 
 
-def probabilities_table(clf: Classifier, skills: Iterable[str], portfolio_text: str = "") -> list[tuple[str, float]]:
+def probabilities_table(
+    clf: Classifier,
+    skills: Iterable[str],
+    resume_text: str = "",
+    portfolio_text: str = "",
+) -> list[tuple[str, float]]:
     """Return class → prob sorted desc — used for the analysis bar chart."""
-    probs = predict_proba(clf, skills, portfolio_text)
+    probs = predict_proba(clf, skills, resume_text + " " + portfolio_text)
     return sorted(probs.items(), key=lambda kv: -kv[1])
 
 
@@ -106,13 +113,14 @@ def what_if(
     target_role: str,
     clf: Classifier,
     jobs_df: pd.DataFrame,
+    resume_text: str = "",
     portfolio_text: str = "",
 ) -> dict:
     freq = _required_skill_frequencies(jobs_df, target_role)
     base_set = set(skills)
     simulated_set = base_set | set(added_skills)
-    base = _score_with_freq(base_set, target_role, clf, freq, portfolio_text)
-    simulated = _score_with_freq(simulated_set, target_role, clf, freq, portfolio_text)
+    base = _score_with_freq(base_set, target_role, clf, freq, resume_text, portfolio_text)
+    simulated = _score_with_freq(simulated_set, target_role, clf, freq, resume_text, portfolio_text)
     base_d, sim_d = base.as_dict(), simulated.as_dict()
     return {
         "base": base_d,
