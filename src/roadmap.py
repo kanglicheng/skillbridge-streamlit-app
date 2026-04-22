@@ -118,32 +118,10 @@ def _openai_roadmap(
         return None
 
 
-# Cache design: split by path so a transient OpenAI failure can't poison the
-# "OpenAI succeeded" cache line.
-#
-# The old single-cache design cached the *decision* ("tried OpenAI, got back X")
-# together with the result. If OpenAI failed mid-flight and the function fell
-# through to the fallback, that fallback got cached under use_openai=True — and
-# every subsequent call with the same inputs returned the stale fallback,
-# even after the API recovered.
-#
-# Now: each path has its own cache. The OpenAI path also has a short TTL so
-# that a cached None (transient failure) ages out quickly — st.cache_data
-# caches every return value including None, so the TTL is what guarantees
-# self-healing. The fallback path is a deterministic pure function of inputs
-# and needs no TTL.
-#
-# Neither cache key includes the API key itself (we cache by model + inputs,
-# not the secret). Settings are re-loaded inside the OpenAI-path function.
-#
-# Scope caveat: neither cache keys on resources.json or skills_taxonomy.json
-# content. Both files are read at import time via @lru_cache in job_data.py and
-# are treated as immutable for the process lifetime — consistent with how the
-# classifier keys on JOBS_CSV's mtime but these loaders don't. If this app ever
-# runs in a context where content files can change at runtime (live CMS,
-# hot-reload), add an mtime-based version arg to both this cache and the
-# lru_cache loaders in job_data.py; otherwise a resources.json edit would
-# yield stale URLs in cached roadmap output until process restart.
+# Two caches, one per path: a transient OpenAI failure can't poison the
+# "OpenAI succeeded" line. TTL on the OpenAI cache lets a cached None
+# (st.cache_data caches None too) self-heal. Cache keys exclude the API
+# key — we key on model + inputs.
 _OPENAI_CACHE_TTL_SECONDS = 300
 
 
@@ -157,14 +135,8 @@ def _cached_openai_roadmap(
 ) -> Roadmap | None:
     """OpenAI path. Returns None if OpenAI is unavailable or the call fails.
 
-    The returned None *is* cached, but `ttl` on the decorator bounds the
-    stale window to 5 minutes — long enough to memoize across rapid What-If
-    toggles, short enough to self-heal after a transient failure.
-
-    Cache-key discipline: `openai_model` is passed through and used for the
-    call so the cache key matches the model that actually produced the result.
-    The API key is re-loaded inside and deliberately excluded from the cache
-    key (secrets don't belong in cache identities).
+    Nones are cached; TTL self-heals. API key is loaded inside and
+    deliberately excluded from the cache key.
     """
     live = Settings.load(use_fallbacks_only=False)
     if not live.openai_api_key:

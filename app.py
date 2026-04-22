@@ -112,10 +112,7 @@ def _input_hash(
     use_fallbacks_only: bool,
     openai_model: str,
 ) -> str:
-    # openai_model is part of the key so switching models via env invalidates the
-    # cached analysis — keeps this consistent with roadmap.py's OpenAI cache, which
-    # also keys on the model. Without it, a model flip would silently re-display
-    # the old analysis under the new label.
+    # openai_model is in the key so a model flip invalidates cached analysis.
     h = hashlib.sha256()
     for part in (resume_text, portfolio_text, target_role, str(use_fallbacks_only), openai_model):
         h.update(part.encode("utf-8", errors="ignore"))
@@ -168,15 +165,10 @@ def _resolve_text(file, text: str, label: str) -> str:
         try:
             return extract_text(io.BytesIO(file.read()))
         except PDFReadError as e:
-            # Catches both the "can't open" (PDFReadError) and the "opens but empty"
-            # (EmptyPDFError, a PDFReadError subclass) cases. If the UI ever needs to
-            # branch on them, add a second except block above this one.
             st.warning(f"{label.capitalize()} PDF: {e}")
             return text.strip()
         except Exception:
-            # Defense-in-depth: pdf_utils translates pdfplumber errors to PDFReadError,
-            # so this should not trigger — but we keep it so any unanticipated failure
-            # (e.g., file.read() itself) still yields a graceful fallback.
+            # Defense-in-depth for unanticipated failures (e.g., file.read() itself).
             log.exception("Unexpected PDF failure for %s", label)
             st.warning(f"Could not read {label} PDF; using pasted text if provided.")
             return text.strip()
@@ -193,12 +185,7 @@ def _run_analysis(resume_text: str, portfolio_text: str, target_role: str, setti
 
     with st.spinner("Extracting skills and scoring..."):
         taxonomy = load_taxonomy()
-        # Run extraction over BOTH resume and portfolio. Portfolio prose was
-        # previously only fed to the classifier and the roadmap LLM context,
-        # so a skill mentioned only in the portfolio (e.g., Terraform in a
-        # project description) would never enter `extraction.skills` and would
-        # then surface as a "missing" gap. The two inputs are joined so the
-        # rule-based scanner and the OpenAI extractor both see everything.
+        # Feed both texts to extraction so portfolio-only skills don't surface as gaps.
         candidate_text = resume_text + (("\n\n" + portfolio_text) if portfolio_text else "")
         extraction = extract_skills(candidate_text, taxonomy, settings)
         clf = get_classifier()
@@ -220,9 +207,8 @@ def _run_analysis(resume_text: str, portfolio_text: str, target_role: str, setti
         f"Analyzed — {len(extraction.skills)} skills extracted ({extraction.source})",
         icon="✅",
     )
-    # Auto-advance to the Analysis step. `_pending_nav` is applied at the top of
-    # main() *before* the segmented_control widget instantiates — Streamlit
-    # forbids writing a widget's own key after the widget renders in the same run.
+    # `_pending_nav` is consumed before segmented_control instantiates —
+    # Streamlit forbids writing a widget's own key after it renders.
     st.session_state["_pending_nav"] = STEPS[1]
     st.rerun()
 

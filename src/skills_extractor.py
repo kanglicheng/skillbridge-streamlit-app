@@ -116,26 +116,13 @@ def _openai_extract(text: str, taxonomy: list[dict], settings: Settings) -> tupl
 
 
 def extract_skills(text: str, taxonomy: list[dict], settings: Settings) -> ExtractionResult:
-    """Run OpenAI (when available) AND the rule-based scanner; union both.
+    """Run OpenAI (when available) and the rule-based scanner; union both.
 
-    Earlier behavior treated OpenAI as authoritative — fallback only ran if
-    OpenAI returned nothing. The failure mode: OpenAI can miss a verbatim
-    token (a one-line `Kafka` bullet, a brand name on its own line) even when
-    it returns 20+ other skills, and that token then never surfaces. The rule-
-    based scanner would have caught it but never ran.
+    The rule-based pass is a floor — OpenAI sometimes drops a verbatim token
+    (e.g. a one-line `Kafka` bullet) even when it returns 20+ others. Both
+    paths feed `canonicalize()` so the allowlist invariant holds.
 
-    Now: the rule-based pass always runs and is unioned into the result.
-    Both inputs go through `canonicalize()` so the allowlist invariant holds.
-    OpenAI's contribution is preserved (context-sensitive matching of taxonomy
-    hints and their synonyms — see the constraint in src/prompts.py: "ONLY
-    return skills that appear in, or are direct synonyms of, the provided
-    taxonomy hint list"); the fallback guarantees a verbatim-token floor.
-
-    `source` reports which path actually contributed: "openai" if OpenAI ran
-    successfully and emitted at least one skill, "fallback" otherwise. The
-    rule-based union runs in both cases — the label reflects whether OpenAI
-    added anything beyond the rule-based pass, not whether the rule-based
-    pass ran.
+    `source` is "openai" only when OpenAI contributed at least one skill.
     """
     if not text or not text.strip():
         return ExtractionResult(skills=[], source="fallback", evidence={})
@@ -145,8 +132,6 @@ def extract_skills(text: str, taxonomy: list[dict], settings: Settings) -> Extra
 
     fb_skills, fb_evidence = _fallback_extract(text, taxonomy)
 
-    # Union preserving order: OpenAI first (more semantically rich), then any
-    # rule-based-only skills appended.
     raw_skills: list[str] = list(oai_skills)
     seen = set(raw_skills)
     for s in fb_skills:
@@ -154,9 +139,6 @@ def extract_skills(text: str, taxonomy: list[dict], settings: Settings) -> Extra
             raw_skills.append(s)
             seen.add(s)
 
-    # Evidence: prefer OpenAI's per-skill snippet; fill in rule-based snippets
-    # for anything OpenAI didn't justify. Both go through the snippet-grounding
-    # check below, so fabricated OpenAI snippets still get dropped.
     raw_evidence: dict[str, str] = dict(oai_evidence)
     for s, snippet in fb_evidence.items():
         raw_evidence.setdefault(s, snippet)
@@ -165,16 +147,9 @@ def extract_skills(text: str, taxonomy: list[dict], settings: Settings) -> Extra
 
     canonical_skills = canonicalize(raw_skills, taxonomy)
 
-    # Map evidence keys through canonicalization too (OpenAI evidence may use aliases).
-    # Snippets are retained only if their whitespace-normalized form appears in the
-    # resume — the model is *claiming* these come from the text, but the prompt doesn't
-    # constrain it to copy verbatim. Dropping non-present snippets prevents surfacing
-    # fabricated evidence (belt-and-suspenders alongside escape_markdown at render time).
-    #
-    # Normalization matters on both sides: _fallback_extract collapses newlines to
-    # spaces when building its window (see above), so a raw substring check against
-    # the original text would reject almost every multi-line fallback snippet. Flattening
-    # whitespace on both sides also tolerates minor rewrites from the OpenAI path.
+    # Grounding check: drop snippets that don't appear in the resume (OpenAI can
+    # fabricate). Whitespace-normalized on both sides so fallback slices that
+    # collapsed newlines still match.
     canon_evidence: dict[str, str] = {}
     if raw_evidence:
         index = _build_alias_index(taxonomy)
@@ -189,11 +164,8 @@ def extract_skills(text: str, taxonomy: list[dict], settings: Settings) -> Extra
                 continue
             canon_evidence[canon] = snippet
 
-    # Recover from grounding drops: if OpenAI's snippet for a skill failed the
-    # grounding check above and was discarded, the rule-based pass may still
-    # have a snippet for the same skill. fb_evidence snippets are always grounded
-    # by construction (sliced directly from the resume), so we can backfill
-    # without re-running the check.
+    # Backfill from fb_evidence after grounding — fallback snippets are always
+    # grounded by construction (sliced from the resume).
     for canon, snippet in fb_evidence.items():
         if canon in canonical_skills and canon not in canon_evidence:
             canon_evidence[canon] = snippet

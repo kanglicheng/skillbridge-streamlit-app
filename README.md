@@ -33,10 +33,10 @@ matcher math, what-if monotonicity, roadmap ordering) — no OpenAI mocking.
 
 ## How it works
 
-- **Taxonomy-first canonicalization** — resume skills from either the OpenAI
-  extractor or the rule-based fallback are mapped to canonical IDs before
-  scoring. The rest of the app never sees raw strings, so output is consistent
-  regardless of which extractor was used.
+- **Taxonomy-first canonicalization** — resume skills from the OpenAI
+  extractor and the rule-based scanner are unioned and mapped to canonical IDs
+  before scoring. The rest of the app never sees raw strings, so output is
+  consistent regardless of which extractor contributed.
 - **Composite score** — `0.4 × classifier_prob + 0.6 × frequency-weighted
   skill overlap`. Overlap carries more weight because it's more interpretable
   and less noisy on a 100-row synthetic dataset than a TF-IDF + LogReg

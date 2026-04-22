@@ -22,13 +22,8 @@ REQUIRED_COLUMNS = {
 
 
 def load_jobs(path: Path = JOBS_CSV) -> pd.DataFrame:
-    """Read jobs.csv fresh on every call — intentionally uncached.
-
-    Jobs are modeled as live data (listings come and go in a real system),
-    while `load_taxonomy` and `load_resources` are cached because the canonical
-    skill list and curated learning resources are reference data. The classifier
-    keys its own cache on the CSV's mtime (see classifier.py), so edits to this
-    file still invalidate downstream model state correctly.
+    """Uncached: jobs are modeled as live data. Taxonomy and resources are
+    cached as reference data; the classifier keys its cache on CSV mtime.
     """
     df = pd.read_csv(path)
     missing = REQUIRED_COLUMNS - set(df.columns)

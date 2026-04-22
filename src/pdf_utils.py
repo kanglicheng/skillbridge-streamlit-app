@@ -12,23 +12,12 @@ MIN_TEXT_LEN = 40  # Below this, treat as "no text extracted" (likely a scanned 
 
 
 class PDFReadError(ValueError):
-    """Raised when text extraction from a PDF fails for any reason.
-
-    Base class for all PDF-extraction errors surfaced by this module. app.py
-    catches this to render a user-facing warning and fall back to pasted text.
-    Subclasses preserve the specific cause — corrupted/encrypted vs. empty —
-    for future callers that want to distinguish, without forcing current
-    callers to handle both.
-    """
+    """Base class for PDF extraction failures. Subclasses let callers
+    distinguish causes (corrupted vs. empty) without forcing them to."""
 
 
 class EmptyPDFError(PDFReadError):
-    """Raised when a PDF opens cleanly but yields too little text (e.g., scanned images).
-
-    Specializes PDFReadError: the file is readable, just not usefully textual.
-    Kept distinct from the corrupted/encrypted case at the raise site as
-    self-documentation, even though app.py currently treats them identically.
-    """
+    """Raised when a PDF opens cleanly but yields too little text (likely scanned)."""
 
 
 def extract_text(file: BinaryIO) -> str:

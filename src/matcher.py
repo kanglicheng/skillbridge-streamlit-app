@@ -63,7 +63,7 @@ def _score_with_freq(
 ) -> Score:
     """Internal: score given a precomputed freq Counter. Lets what_if reuse freq
     across the base/simulated pair without recomputing per-role stats twice."""
-    probs = predict_proba(clf, skills_set, resume_text + " " + portfolio_text)
+    probs = predict_proba(clf, skills_set, " ".join(filter(None, [resume_text, portfolio_text])))
     classifier_prob = float(probs.get(target_role, 0.0))
     overlap = _freq_weighted_overlap(skills_set, freq)
     composite = CLASSIFIER_WEIGHT * classifier_prob + OVERLAP_WEIGHT * overlap
@@ -103,7 +103,7 @@ def probabilities_table(
     portfolio_text: str = "",
 ) -> list[tuple[str, float]]:
     """Return class → prob sorted desc — used for the analysis bar chart."""
-    probs = predict_proba(clf, skills, resume_text + " " + portfolio_text)
+    probs = predict_proba(clf, skills, " ".join(filter(None, [resume_text, portfolio_text])))
     return sorted(probs.items(), key=lambda kv: -kv[1])
 
 
